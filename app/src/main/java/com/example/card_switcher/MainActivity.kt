@@ -7,7 +7,6 @@ import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.card_switcher.ui.theme.CardSwitcherTheme
@@ -16,8 +15,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -26,8 +23,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.runtime.*
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.zIndex
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,16 +61,21 @@ fun DefaultPreview() {
 
 @Composable
 fun StackedCards() {
-    val areSeparated = remember { mutableStateOf(false) }
+    val cardState = remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            val separationDistance = animateDpAsState(targetValue = if (areSeparated.value) 100.dp else 0.dp, animationSpec = tween(durationMillis = 1000)).value
+            val separationDistance = animateDpAsState(
+                targetValue = if (cardState.value % 2 == 1) 100.dp else 0.dp,
+                animationSpec = tween(durationMillis = 1000)
+            ).value
+
             val blueCardOffset = Modifier.offset(x = separationDistance, y = 0.dp)
             val redCardOffset = Modifier.offset(x = -separationDistance, y = 16.dp)
 
             Card(
-                modifier = redCardOffset,
+                modifier = redCardOffset
+                    .zIndex(if (cardState.value % 4 >= 2) 2f else 0f),
                 backgroundColor = Color.Red,
             ) {
                 Box(Modifier.size(200.dp, 150.dp))
@@ -79,12 +84,47 @@ fun StackedCards() {
             Card(
                 modifier = blueCardOffset
                     .clickable {
-                        areSeparated.value = !areSeparated.value
-                    },
+                        when (cardState.value % 4) {
+                            0 -> {
+                                // first click, move cards apart
+                                cardState.value = 1
+                            }
+                            1 -> {
+                                // second click, move cards back together
+                                cardState.value = 2
+                            }
+                            2 -> {
+                                // third click, move cards apart again
+                                cardState.value = 3
+                            }
+                            3 -> {
+                                // fourth click, move cards back together again
+                                cardState.value = 0
+                            }
+                        }
+                    }
+                    .zIndex(if (cardState.value % 4 >= 2) 0f else 2f),
                 backgroundColor = Color.Blue,
             ) {
                 Box(Modifier.size(200.dp, 150.dp))
             }
         }
     }
+
+    // Check if the animation has completed and reset card state to allow for infinite animation
+    LaunchedEffect(cardState.value) {
+        if (cardState.value == 0 || cardState.value == 2) {
+            delay(1000)
+            cardState.value++
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
