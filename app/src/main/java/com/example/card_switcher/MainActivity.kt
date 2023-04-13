@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    StackedCards()
+                    StackedCards(StackedCardsConfiguration(cardModifier = Modifier.size(200.dp, 350.dp)))
                 }
             }
         }
@@ -60,8 +60,20 @@ fun DefaultPreview() {
     }
 }
 
+sealed class AnimationDirection {
+    object TopRightBottomLeft : AnimationDirection()
+    object TopLeftBottomRight : AnimationDirection()
+}
+data class StackedCardsConfiguration(
+    val animationDuration: Int = 1000,
+    val blueCardContent: @Composable () -> Unit = {},
+    val redCardContent: @Composable () -> Unit = {},
+    val cardModifier: Modifier = Modifier.size(200.dp, 150.dp),
+    val animationDirection: AnimationDirection = AnimationDirection.TopRightBottomLeft
+)
+
 @Composable
-fun StackedCards() {
+fun StackedCards(cardsConfiguration: StackedCardsConfiguration) {
     val cardState = remember { mutableStateOf(0) }
     val zIndexState = remember { mutableStateOf(0) }
 
@@ -69,28 +81,38 @@ fun StackedCards() {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val separationDistance = animateDpAsState(
                 targetValue = if (cardState.value % 2 != 0) 100.dp else 0.dp,
-                animationSpec = tween(durationMillis = 1000)
+                animationSpec = tween(durationMillis = cardsConfiguration.animationDuration)
             ).value
 
-            val blueCardOffset = Modifier.offset(x = separationDistance + 8.dp, y = 0.dp)
-            val redCardOffset = Modifier.offset(x = -separationDistance, y = (-8).dp)
+            val bottomCardOffset = when (cardsConfiguration.animationDirection) {
+                AnimationDirection.TopRightBottomLeft -> Modifier.offset(x = separationDistance, y = 0.dp)
+                AnimationDirection.TopLeftBottomRight -> Modifier.offset(x = -separationDistance, y = 0.dp)
+            }
+            val topCardOffset = when (cardsConfiguration.animationDirection) {
+                AnimationDirection.TopRightBottomLeft -> Modifier.offset(x = -separationDistance, y = 16.dp)
+                AnimationDirection.TopLeftBottomRight -> Modifier.offset(x = separationDistance, y = 16.dp)
+            }
 
             Card(
-                modifier = redCardOffset
+                modifier = topCardOffset
                     .clickable { cardState.value = (cardState.value + 1) % 2 }
                     .zIndex(if (zIndexState.value % 2 != 0) 0f else 2f),
                 backgroundColor = Color.Red,
             ) {
-                Box(Modifier.size(200.dp, 150.dp))
+                Box(cardsConfiguration.cardModifier){
+                    cardsConfiguration.redCardContent
+                }
             }
 
             Card(
-                modifier = blueCardOffset
+                modifier = bottomCardOffset
                     .clickable { cardState.value = (cardState.value + 1) % 2 }
                     .zIndex(if (zIndexState.value % 2 != 0) 2f else 0f),
                 backgroundColor = Color.Blue,
             ) {
-                Box(Modifier.size(200.dp, 150.dp))
+                Box(cardsConfiguration.cardModifier){
+                    cardsConfiguration.blueCardContent
+                }
             }
         }
     }
