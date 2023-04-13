@@ -1,6 +1,7 @@
 package com.example.card_switcher
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateIntOffsetAsState
@@ -62,20 +63,22 @@ fun DefaultPreview() {
 @Composable
 fun StackedCards() {
     val cardState = remember { mutableStateOf(0) }
+    val zIndexState = remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val separationDistance = animateDpAsState(
-                targetValue = if (cardState.value % 2 == 1) 100.dp else 0.dp,
+                targetValue = if (cardState.value % 2 != 0) 100.dp else 0.dp,
                 animationSpec = tween(durationMillis = 1000)
             ).value
 
-            val blueCardOffset = Modifier.offset(x = separationDistance, y = 0.dp)
-            val redCardOffset = Modifier.offset(x = -separationDistance, y = 16.dp)
+            val blueCardOffset = Modifier.offset(x = separationDistance + 8.dp, y = 0.dp)
+            val redCardOffset = Modifier.offset(x = -separationDistance, y = (-8).dp)
 
             Card(
                 modifier = redCardOffset
-                    .zIndex(if (cardState.value % 4 >= 2) 2f else 0f),
+                    .clickable { cardState.value = (cardState.value + 1) % 2 }
+                    .zIndex(if (zIndexState.value % 2 != 0) 0f else 2f),
                 backgroundColor = Color.Red,
             ) {
                 Box(Modifier.size(200.dp, 150.dp))
@@ -83,27 +86,8 @@ fun StackedCards() {
 
             Card(
                 modifier = blueCardOffset
-                    .clickable {
-                        when (cardState.value % 4) {
-                            0 -> {
-                                // first click, move cards apart
-                                cardState.value = 1
-                            }
-                            1 -> {
-                                // second click, move cards back together
-                                cardState.value = 2
-                            }
-                            2 -> {
-                                // third click, move cards apart again
-                                cardState.value = 3
-                            }
-                            3 -> {
-                                // fourth click, move cards back together again
-                                cardState.value = 0
-                            }
-                        }
-                    }
-                    .zIndex(if (cardState.value % 4 >= 2) 0f else 2f),
+                    .clickable { cardState.value = (cardState.value + 1) % 2 }
+                    .zIndex(if (zIndexState.value % 2 != 0) 2f else 0f),
                 backgroundColor = Color.Blue,
             ) {
                 Box(Modifier.size(200.dp, 150.dp))
@@ -113,12 +97,27 @@ fun StackedCards() {
 
     // Check if the animation has completed and reset card state to allow for infinite animation
     LaunchedEffect(cardState.value) {
-        if (cardState.value == 0 || cardState.value == 2) {
+        if (cardState.value == 1 || cardState.value == 3) {
             delay(1000)
-            cardState.value++
+            zIndexState.value = (zIndexState.value + 1) % 2
+            cardState.value = (cardState.value + 1) % 2
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
