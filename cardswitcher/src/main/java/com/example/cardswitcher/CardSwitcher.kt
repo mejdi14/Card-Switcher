@@ -1,70 +1,28 @@
-package com.example.card_switcher
+package com.example.cardswitcher
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.card_switcher.ui.theme.CardSwitcherTheme
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material.Card
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.runtime.*
 import androidx.compose.ui.zIndex
+import com.example.cardswitcher.data.SwitchedCardsData
+import com.example.cardswitcher.enums.AnimationDirection
 import kotlinx.coroutines.delay
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            CardSwitcherTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    StackedCards(SwitchedCardsData(cardModifier = Modifier.size(200.dp, 350.dp)))
-                }
-            }
-        }
-    }
-}
-
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    CardSwitcherTheme {
-        Greeting("Android")
-    }
-}
-
-sealed class AnimationDirection {
-    object TopRightBottomLeft : AnimationDirection()
-    object TopLeftBottomRight : AnimationDirection()
-}
-data class SwitchedCardsData(
-    val animationDuration: Int = 1000,
-    val bottomCardContent: @Composable () -> Unit = {},
-    val topCardContent: @Composable () -> Unit = {},
-    val cardModifier: Modifier = Modifier.size(200.dp, 150.dp),
-    val animationDirection: AnimationDirection = AnimationDirection.TopRightBottomLeft
-)
-
-@Composable
-fun StackedCards(cardsConfiguration: SwitchedCardsData) {
+fun CardSwitcher(cardsConfiguration: SwitchedCardsData) {
     val cardState = remember { mutableStateOf(0) }
     val zIndexState = remember { mutableStateOf(0) }
 
@@ -108,7 +66,6 @@ fun StackedCards(cardsConfiguration: SwitchedCardsData) {
         }
     }
 
-    // Check if the animation has completed and reset card state to allow for infinite animation
     LaunchedEffect(cardState.value) {
         if (cardState.value == 1 || cardState.value == 3) {
             delay(1000)
@@ -117,26 +74,3 @@ fun StackedCards(cardsConfiguration: SwitchedCardsData) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
