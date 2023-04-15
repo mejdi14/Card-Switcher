@@ -10,9 +10,10 @@ data class SwitchedCardsData(
     val animationDuration: Int = 500,
     val timeBetweenAnimations: Int = 500,
     val triggerOnClick: Boolean = true,
+    val enableSwipe: Boolean = true,
     val topCardContent: (@Composable (triggerAnimation: () -> Unit) -> Unit) = {},
     val bottomCardContent: (@Composable (triggerAnimation: () -> Unit) -> Unit) = {},
     val cardModifier: Modifier = Modifier.size(200.dp, 150.dp),
-    val animationDirection: AnimationDirection = AnimationDirection.TopRightBottomLeft,
+    val animationDirection: AnimationDirection = AnimationDirection.TopGoesRightBottomGoesLeft,
     val onAnimationStart: (() -> Unit)? = null
 )
