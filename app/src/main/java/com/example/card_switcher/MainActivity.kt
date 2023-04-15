@@ -3,40 +3,70 @@ package com.example.card_switcher
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.card_switcher.ui.theme.CardSwitcherTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.zIndex
-import kotlinx.coroutines.delay
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.card_switcher.data.SwitchedCardsData
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CardSwitcherTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    StackedCards(SwitchedCardsData(cardModifier = Modifier.size(200.dp, 350.dp)))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        SwitchedCard(SwitchedCardsData(
+                            cardModifier = Modifier.size(200.dp, 350.dp),
+                            topCardContent = { triggerAnimation ->
+                                CardContent(
+                                    imageResId = R.drawable.dog,
+                                    text = "Top Card",
+                                    onClick = triggerAnimation
+                                )
+                            },
+                            bottomCardContent = { triggerAnimation ->
+                                CardContent(
+                                    imageResId = R.drawable.dog,
+                                    text = "Bottom Card",
+                                    onClick = triggerAnimation
+                                )
+                            }
+                        ))
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(onClick = { /* trigger the animation */ }) {
+                            Text("Switch Cards")
+                        }
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun Greeting(name: String) {
@@ -51,78 +81,27 @@ fun DefaultPreview() {
     }
 }
 
-sealed class AnimationDirection {
-    object TopRightBottomLeft : AnimationDirection()
-    object TopLeftBottomRight : AnimationDirection()
-}
-data class SwitchedCardsData(
-    val animationDuration: Int = 1000,
-    val bottomCardContent: @Composable () -> Unit = {},
-    val topCardContent: @Composable () -> Unit = {},
-    val cardModifier: Modifier = Modifier.size(200.dp, 150.dp),
-    val animationDirection: AnimationDirection = AnimationDirection.TopRightBottomLeft
-)
 
 @Composable
-fun StackedCards(cardsConfiguration: SwitchedCardsData) {
-    val cardState = remember { mutableStateOf(0) }
-    val zIndexState = remember { mutableStateOf(0) }
-
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            val separationDistance = animateDpAsState(
-                targetValue = if (cardState.value % 2 != 0) 100.dp else 0.dp,
-                animationSpec = tween(durationMillis = cardsConfiguration.animationDuration)
-            ).value
-
-            val bottomCardOffset = when (cardsConfiguration.animationDirection) {
-                AnimationDirection.TopRightBottomLeft -> Modifier.offset(x = separationDistance, y = 0.dp)
-                AnimationDirection.TopLeftBottomRight -> Modifier.offset(x = -separationDistance, y = 0.dp)
-            }
-            val topCardOffset = when (cardsConfiguration.animationDirection) {
-                AnimationDirection.TopRightBottomLeft -> Modifier.offset(x = -separationDistance, y = 16.dp)
-                AnimationDirection.TopLeftBottomRight -> Modifier.offset(x = separationDistance, y = 16.dp)
-            }
-
-            Card(
-                modifier = topCardOffset
-                    .clickable { cardState.value = (cardState.value + 1) % 2 }
-                    .zIndex(if (zIndexState.value % 2 != 0) 0f else 2f),
-                backgroundColor = Color.Red,
-            ) {
-                Box(cardsConfiguration.cardModifier){
-                    cardsConfiguration.topCardContent
-                }
-            }
-
-            Card(
-                modifier = bottomCardOffset
-                    .clickable { cardState.value = (cardState.value + 1) % 2 }
-                    .zIndex(if (zIndexState.value % 2 != 0) 2f else 0f),
-                backgroundColor = Color.Blue,
-            ) {
-                Box(cardsConfiguration.cardModifier){
-                    cardsConfiguration.bottomCardContent
-                }
-            }
-        }
-    }
-
-    // Check if the animation has completed and reset card state to allow for infinite animation
-    LaunchedEffect(cardState.value) {
-        if (cardState.value == 1 || cardState.value == 3) {
-            delay(1000)
-            zIndexState.value = (zIndexState.value + 1) % 2
-            cardState.value = (cardState.value + 1) % 2
-        }
+fun CardContent(imageResId: Int, text: String, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .clickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = text,
+            modifier = Modifier
+                .size(128.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 20.sp)
     }
 }
-
-
-
-
-
-
 
 
 

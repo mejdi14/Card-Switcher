@@ -1,10 +1,10 @@
-package com.example.cardswitcher.data
+package com.example.card_switcher.data
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.cardswitcher.enums.AnimationDirection
+import com.example.card_switcher.enums.AnimationDirection
 
 data class SwitchedCardsData(
     val animationDuration: Int = 1000,

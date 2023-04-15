@@ -1,4 +1,4 @@
-package com.example.cardswitcher
+package com.example.card_switcher
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -14,18 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.cardswitcher.data.SwitchedCardsData
-import com.example.cardswitcher.enums.AnimationDirection
+import com.example.card_switcher.data.SwitchedCardsData
+import com.example.card_switcher.enums.AnimationDirection
 import kotlinx.coroutines.delay
 
 @Composable
 fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
     val cardState = remember { mutableStateOf(0) }
     val zIndexState = remember { mutableStateOf(0) }
-
-    val triggerAnimation = {
-        cardState.value = (cardState.value + 1) % 2
-    }
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -45,38 +41,34 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
 
             Card(
                 modifier = topCardOffset
-                    .then(if (cardsConfiguration.triggerOnClick) Modifier.clickable { triggerAnimation() } else Modifier)
+                    .clickable { cardState.value = (cardState.value + 1) % 2 }
                     .zIndex(if (zIndexState.value % 2 != 0) 0f else 2f),
                 backgroundColor = Color.Red,
             ) {
                 Box(cardsConfiguration.cardModifier){
-                    cardsConfiguration.topCardContent(triggerAnimation)
+                    cardsConfiguration.topCardContent
                 }
             }
 
             Card(
                 modifier = bottomCardOffset
-                    .then(if (cardsConfiguration.triggerOnClick) Modifier.clickable { triggerAnimation() } else Modifier)
+                    .clickable { cardState.value = (cardState.value + 1) % 2 }
                     .zIndex(if (zIndexState.value % 2 != 0) 2f else 0f),
                 backgroundColor = Color.Blue,
             ) {
                 Box(cardsConfiguration.cardModifier){
-                    cardsConfiguration.bottomCardContent(triggerAnimation)
+                    cardsConfiguration.bottomCardContent
                 }
             }
         }
     }
 
-    cardsConfiguration.onAnimationStart?.let { onAnimationStart ->
-        LaunchedEffect(key1 = cardState.value, block = {
-            if (cardState.value == 1 || cardState.value == 3) {
-                delay(1000)
-                zIndexState.value = (zIndexState.value + 1) % 2
-                cardState.value = (cardState.value + 1) % 2
-            }
-        })
-        DisposableEffect(key1 = Unit, effect = {
-            onDispose { onAnimationStart() } // Remove the extra triggerAnimation() invocation
-        })
+    // Check if the animation has completed and reset card state to allow for infinite animation
+    LaunchedEffect(cardState.value) {
+        if (cardState.value == 1 || cardState.value == 3) {
+            delay(1000)
+            zIndexState.value = (zIndexState.value + 1) % 2
+            cardState.value = (cardState.value + 1) % 2
+        }
     }
 }
