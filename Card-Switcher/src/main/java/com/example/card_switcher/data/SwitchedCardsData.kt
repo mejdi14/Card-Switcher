@@ -7,7 +7,8 @@ import androidx.compose.ui.unit.dp
 import com.example.card_switcher.enums.AnimationDirection
 
 data class SwitchedCardsData(
-    val animationDuration: Int = 1000,
+    val animationDuration: Int = 500,
+    val timeBetweenAnimations: Int = 500,
     val triggerOnClick: Boolean = true,
     val topCardContent: (@Composable (triggerAnimation: () -> Unit) -> Unit) = {},
     val bottomCardContent: (@Composable (triggerAnimation: () -> Unit) -> Unit) = {},

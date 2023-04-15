@@ -45,8 +45,11 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
                     .zIndex(if (zIndexState.value % 2 != 0) 0f else 2f),
                 backgroundColor = Color.Red,
             ) {
-                Box(cardsConfiguration.cardModifier){
-                    cardsConfiguration.topCardContent
+                Box(cardsConfiguration.cardModifier) {
+                    // Invoke the topCardContent lambda function here
+                    cardsConfiguration.topCardContent {
+                        cardState.value = (cardState.value + 1) % 2
+                    }
                 }
             }
 
@@ -56,8 +59,11 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
                     .zIndex(if (zIndexState.value % 2 != 0) 2f else 0f),
                 backgroundColor = Color.Blue,
             ) {
-                Box(cardsConfiguration.cardModifier){
-                    cardsConfiguration.bottomCardContent
+                Box(cardsConfiguration.cardModifier) {
+                    // Invoke the bottomCardContent lambda function here
+                    cardsConfiguration.bottomCardContent {
+                        cardState.value = (cardState.value + 1) % 2
+                    }
                 }
             }
         }
@@ -66,9 +72,10 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
     // Check if the animation has completed and reset card state to allow for infinite animation
     LaunchedEffect(cardState.value) {
         if (cardState.value == 1 || cardState.value == 3) {
-            delay(1000)
+            delay(cardsConfiguration.timeBetweenAnimations.toLong())
             zIndexState.value = (zIndexState.value + 1) % 2
             cardState.value = (cardState.value + 1) % 2
         }
     }
 }
+
