@@ -30,29 +30,34 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        val animationListener = object : SwitchedCardAnimationListener {
+                            override fun onAnimationStart() {
+                                // Animation started
+                            }
+
+                            override fun onAnimationEnd() {
+                                // Animation finished
+                            }
+                        }
                         SwitchedCard(SwitchedCardsData(
                             cardModifier = Modifier.size(200.dp, 350.dp),
+                            triggerOnClick = false,
+                            listener = animationListener,
                             topCardContent = { triggerAnimation ->
                                 CardContent(
                                     imageResId = R.drawable.dog,
-                                    text = "Top Card",
+                                    text = "Main Card",
                                     onClick = triggerAnimation
                                 )
                             },
                             bottomCardContent = { triggerAnimation ->
                                 CardContent(
                                     imageResId = R.drawable.dog,
-                                    text = "Bottom Card",
+                                    text = "Details Card",
                                     onClick = triggerAnimation
                                 )
                             }
                         ))
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(onClick = { /* trigger the animation */ }) {
-                            Text("Switch Cards")
-                        }
                     }
                 }
             }
