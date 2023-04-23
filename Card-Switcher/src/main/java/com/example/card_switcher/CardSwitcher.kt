@@ -29,7 +29,9 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
         Modifier.pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->
                 val distance = change.position.x
-                processSwipe(distance, cardsConfiguration.swipeSensibility) { cardState.value = (cardState.value + 1) % 2 }
+                processSwipe(distance, cardsConfiguration.swipeSensibility) {
+                    cardState.value = (cardState.value + 1) % 2
+                }
             }
         }
     } else {
@@ -68,12 +70,24 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
             ).value
 
             val bottomCardOffset = when (cardsConfiguration.animationDirection) {
-                AnimationDirection.TopGoesRightBottomGoesLeft -> Modifier.offset(x = separationDistance + 8.dp, y = 0.dp)
-                AnimationDirection.TopGoesLeftBottomGoesRight -> Modifier.offset(x = -separationDistance - 8.dp, y = 0.dp)
+                AnimationDirection.TopGoesRightBottomGoesLeft -> Modifier.offset(
+                    x = separationDistance + 8.dp,
+                    y = 0.dp
+                )
+                AnimationDirection.TopGoesLeftBottomGoesRight -> Modifier.offset(
+                    x = -separationDistance - 8.dp,
+                    y = 0.dp
+                )
             }
             val topCardOffset = when (cardsConfiguration.animationDirection) {
-                AnimationDirection.TopGoesRightBottomGoesLeft -> Modifier.offset(x = -separationDistance, y = 8.dp)
-                AnimationDirection.TopGoesLeftBottomGoesRight -> Modifier.offset(x = separationDistance, y = 8.dp)
+                AnimationDirection.TopGoesRightBottomGoesLeft -> Modifier.offset(
+                    x = -separationDistance,
+                    y = 8.dp
+                )
+                AnimationDirection.TopGoesLeftBottomGoesRight -> Modifier.offset(
+                    x = separationDistance,
+                    y = 8.dp
+                )
             }
 
             Card(
@@ -84,7 +98,6 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
                 backgroundColor = Color.Red,
             ) {
                 Box(cardsConfiguration.cardModifier) {
-                    // Invoke the topCardContent lambda function here
                     cardsConfiguration.topCardContent {
                         cardState.value = (cardState.value + 1) % 2
                     }
@@ -99,7 +112,6 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
                 backgroundColor = Color.Blue,
             ) {
                 Box(cardsConfiguration.cardModifier) {
-                    // Invoke the bottomCardContent lambda function here
                     cardsConfiguration.bottomCardContent {
                         cardState.value = (cardState.value + 1) % 2
                     }
@@ -108,7 +120,6 @@ fun SwitchedCard(cardsConfiguration: SwitchedCardsData) {
         }
     }
 
-    // Check if the animation has completed and reset card state to allow for infinite animation
     LaunchedEffect(cardState.value) {
         if (cardState.value == 1 || cardState.value == 3) {
             cardsConfiguration.listener?.onAnimationStart()
