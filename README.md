@@ -45,31 +45,32 @@ dependencies {
 ```
 
 
-## :fire:How to use with kotlin
+## :fire:How to use
 
 ``` java
-    MHColorsDialog(this)
-                .setColorListener { color, colorHex ->
-                    // color and colorHex are the chosen color
-                }
-                .show()
+     SwitchedCard(SwitchedCardsData(
+                            cardModifier = Modifier.size(200.dp, 350.dp),
+                            triggerOnClick = false,
+                            listener = animationListener,
+                            topCardContent = { triggerAnimation ->
+                                CardContent(
+                                    imageResId = R.drawable.dog,
+                                    text = "Main Card",
+                                    onClick = triggerAnimation
+                                )
+                            },
+                            bottomCardContent = { triggerAnimation ->
+                                CardContent(
+                                    imageResId = R.drawable.dog,
+                                    text = "Details Card",
+                                    onClick = triggerAnimation
+                                )
+                            }
+                        ))
 ```
 
-## :coffee:How to use with Java
 
-``` java
-  MHColorsDialog mhColorsDialog=new MHColorsDialog(MainActivity.this);
-                mhColorsDialog.setColorListener(new ColorListener() {
-                    @Override
-                    public void onColorSelected(int color, @NotNull String colorHex) {
-                          // color and colorHex are the chosen color
-                    }
-                });
-                mhColorsDialog.show();
-```
-
-
-## :art:Customization
+## :art:Additional params
 
 Dark Mode
 -----
