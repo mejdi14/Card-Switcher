@@ -15,16 +15,11 @@
   </a>
 </p>
 
-<p align="center">
-<img src="https://github.com/mejdi14/AndroidColorPicker/blob/master/images/logo.png" height="300" width="300" >
-	</p>
-	
-
 ## ✨ Demo
 <p align="center">
-<img src="https://github.com/mejdi14/AndroidColorPicker/blob/master/images/original.gif" height="400" width="550" >
+<img src="https://github.com/mejdi14/Card-Switcher/blob/main/app/images/demo.mp4" height="400" width="550" >
 	</p>
-	
+
 
 ## Installation
 
@@ -45,7 +40,7 @@ Add this to your module's `build.gradle` file (make sure the version matches the
 ```gradle
 dependencies {
 	...
-	implementation 'com.github.mejdi14:AndroidColorPicker:1.0.2'
+	implementation 'com.github.mejdi14:Card-Switcher:1.0.0'
 }
 ```
 
@@ -91,7 +86,7 @@ Add new colors
 ```
 where colorsList is an ArrayList<Int> (every Int represent a color)</br>
 ColorsPosition is where your colors should be in the final list of colors (Start or End)
-	
+
 Use your own colors
 -----
 
@@ -99,7 +94,7 @@ Use your own colors
  .withMyOwnColors(colorsList)
 ```
 where colorsList is an ArrayList<Int> (every Int represent a color)</br>
-this will make the library ignore the default colors and use only your colors from colorsList	
+this will make the library ignore the default colors and use only your colors from colorsList
 
 
 
