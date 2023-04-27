@@ -19,6 +19,9 @@
 <p align="center">
 <img src="https://github.com/mejdi14/Card-Switcher/blob/main/app/images/demo.gif" height="400" width="550" >
 	</p>
+	
+## :art:Design inspiration
+many thanks goes to [Kim Baschet](https://twitter.com/Kim_____B) for the beautiful design and animation
 
 
 ## Installation
@@ -68,9 +71,6 @@ dependencies {
                             }
                         ))
 ```
-
-
-## :art:Additional params
 
 Animation Listener
 -----
