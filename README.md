@@ -72,31 +72,57 @@ dependencies {
 
 ## :art:Additional params
 
-Dark Mode
------
-<img src="https://github.com/mejdi14/AndroidColorPicker/blob/master/images/dark4.png" alt="sample" title="sample" width="320" height="350" align="right" vspace="52" />
-
-``` java
- .withDarkMode()
-```
-Add new colors
+Animation Listener
 -----
 
 ``` java
- .addColors(colorsList,ColorsPosition.START)
-```
-where colorsList is an ArrayList<Int> (every Int represent a color)</br>
-ColorsPosition is where your colors should be in the final list of colors (Start or End)
+ val animationListener = object : SwitchedCardAnimationListener {
+                            override fun onAnimationStart() {
+                                // Animation started
+                            }
 
-Use your own colors
+                            override fun onAnimationEnd() {
+                                // Animation finished
+                            }
+                        }
+```
+Animation duration
 -----
 
 ``` java
- .withMyOwnColors(colorsList)
+ .animationDuration
 ```
-where colorsList is an ArrayList<Int> (every Int represent a color)</br>
-this will make the library ignore the default colors and use only your colors from colorsList
 
+Hold animation duration after separation
+-----
+
+``` java
+ .timeBetweenAnimations
+```
+
+swipe option
+-----
+
+``` java
+ .enableSwipe
+ .swipeSensibility
+```
+trigger the animation start with a swipe gesture
+
+animation direction 
+-----
+``` java
+ .animationDirection
+```
+the default behaviour is that the top card goes right and the bottom card goes left when they separate, you can reverse that
+
+Default click behaviour to trigger animation
+-----
+``` java
+ .triggerOnClick
+```
+setting this value true will make the animation start when clicking on one of the cards
+it's set to false by default so that you can start the animation from another composable using 'triggerAnimation' like in the example
 
 
 
@@ -110,7 +136,7 @@ Feel free to check [issues page] if you want to contribute.<br />
 
 👤 **Mejdi Hafiane**
 
-- profile: [@MejdiHafiane](https://mejdi14.github.io/mejdi/#/about)
+- profile: [@MejdiHafiane](https://twitter.com/mejdi141)
 
 ## Show your support
 
